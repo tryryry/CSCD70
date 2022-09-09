@@ -150,7 +150,10 @@ private:
     /**
      * @todo(cscd70) Please complete the definition of this method.
      */
-
+    for(auto it=pred_begin(&BB),et=pred_end(&BB);it!=et;++it){
+       const BasicBlock* predecessor = *it;
+       Operands.emplace_back(InstDomainValMap.at(&predecessor->back()));
+    }
     return Operands;
   }
   /**
@@ -164,8 +167,12 @@ private:
     /**
      * @todo(cscd70) Please complete the defintion of this method.
      */
-
-    return DomainVal_t(Domain.size());
+    DomainVal_t ret=MeetOperands.at(0);
+    for(size_t i=1;i<MeetOperands.size();i++){
+        TMeetOp MeetOp;
+        ret=MeetOp(ret,MeetOperands.at(i));
+    }
+    return ret;
   }
   /*****************************************************************************
    * Transfer Function
@@ -223,7 +230,24 @@ private:
    *
    * @todo(cscd70) Please implement this method.
    */
-  bool traverseCFG(const Function &F) { return false; }
+  bool traverseCFG(const Function &F) { 
+    //return false; 
+    bool ifChange=false;
+    BBTraversalConstRange bb=getBBTraversalOrder(F);
+    for(auto it=bb.begin(),et=bb.end();it!=et;++it){
+      DomainVal_t in=getBoundaryVal(*it);
+      InstTraversalConstRange inst=getInstTraversalOrder(*it);
+      for(auto iit=inst.begin(),eet=inst.end();iit!=eet;++iit){
+        DomainVal_t out=InstDomainValMap.at(&(*iit));
+        ifChange=ifChange|transferFunc(*iit,in,out);
+        if(ifChange){
+          InstDomainValMap.at(&(*iit))=out;
+        }
+        in=out;
+      }
+    }
+    return ifChange;
+  }
   /*****************************************************************************
    * Domain Initialization
    *****************************************************************************/

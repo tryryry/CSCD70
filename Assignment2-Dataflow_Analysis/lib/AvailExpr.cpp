@@ -27,6 +27,10 @@ private:
       /**
        * @todo(cscd70) Please complete the construction of domain.
        */
+      Expression exp=Expression(*BinaryOp);
+      if(std::find(Domain.begin(),Domain.end(),exp)==Domain.end()){
+          Domain.emplace_back(exp);
+      }
     }
   }
   virtual bool transferFunc(const Instruction &Inst, const DomainVal_t &IBV,
@@ -34,8 +38,41 @@ private:
     /**
      * @todo(cscd70) Please complete the definition of the transfer function.
      */
-
-    return false;
+    DomainVal_t new_OBV=IBV;
+    int id=0;
+    for(Expression exp:Domain){
+        bool flag=false;
+        if(const Instruction *inst=dyn_cast<Instruction>(exp.LHS)){
+          if(inst==&Inst){
+            flag=true;
+          }
+        }
+        if(const Instruction *inst=dyn_cast<Instruction>(exp.RHS)){
+          if(inst==&Inst){
+            flag=true;
+          }
+        }
+        if(flag){
+          new_OBV.at(id)=false;
+        }
+        id++;
+    }
+    if (const BinaryOperator *const BinaryOp =
+            dyn_cast<BinaryOperator>(&Inst)) {
+      auto iter=std::find(Domain.begin(),Domain.end(),Expression(*BinaryOp));
+      if(iter!=Domain.end()){
+        auto begin=Domain.begin();
+        int pos=0;
+        while(begin!=iter){
+          begin++;
+          pos++;
+        }
+        new_OBV.at(pos)=true;
+      }
+    }
+    bool hasChange = new_OBV == OBV ? false:true;
+    OBV=new_OBV;
+    return hasChange;
   }
 
 public:

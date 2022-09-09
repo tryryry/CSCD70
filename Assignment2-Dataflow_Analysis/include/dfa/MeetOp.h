@@ -25,11 +25,15 @@ class Intersect final : public MeetOp<bool> {
 public:
   virtual DomainVal_t operator()(const DomainVal_t &LHS,
                                  const DomainVal_t &RHS) const override {
-
-    return DomainVal_t();
+    assert(LHS.size() == RHS.size());
+    const size_t DomainSize=LHS.size();
+    DomainVal_t ret=DomainVal_t(DomainSize,false);
+    for(size_t i=0;i<DomainSize;i++){
+      ret[i]=LHS.at(i) & RHS.at(i);
+    }
+    return ret;
   }
   virtual DomainVal_t top(const size_t DomainSize) const override {
-
     return DomainVal_t(DomainSize, false);
   }
 };
