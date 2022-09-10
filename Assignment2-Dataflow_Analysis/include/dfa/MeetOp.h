@@ -34,7 +34,7 @@ public:
     return ret;
   }
   virtual DomainVal_t top(const size_t DomainSize) const override {
-    return DomainVal_t(DomainSize, false);
+    return DomainVal_t(DomainSize, true);
   }
 };
 
