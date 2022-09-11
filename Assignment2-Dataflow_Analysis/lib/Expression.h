@@ -22,16 +22,15 @@ struct Expression {
   bool operator==(const Expression &Expr) const { 
      if(LHS==Expr.LHS&&RHS==Expr.RHS&&(Opcode==Expr.Opcode)){
         return true;
-     }else{
-        if(Opcode==Expr.Opcode){
-          if(Opcode==13||Opcode==14||Opcode==17||Opcode==18){
-            if(LHS==Expr.RHS&&RHS==Expr.LHS){
-              return true;
-            }
+     }
+    if(Opcode==Expr.Opcode){
+        if(Opcode==13||Opcode==14||Opcode==17||Opcode==18){
+          if(LHS==Expr.RHS&&RHS==Expr.LHS){
+            return true;
           }
         }
-     }
-     return false;
+    }
+    return false;
   }
 };
 

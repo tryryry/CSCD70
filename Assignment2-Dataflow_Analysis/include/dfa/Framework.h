@@ -33,6 +33,11 @@ struct FrameworkTypeSupport<Direction::kForward> {
   typedef iterator_range<BasicBlock::const_iterator> InstTraversalConstRange;
 };
 
+template <> //
+struct FrameworkTypeSupport<Direction::kBackward> {
+  typedef iterator_range<Function::BasicBlockListType::const_reverse_iterator> BBTraversalConstRange;
+  typedef iterator_range<BasicBlock::InstListType::const_reverse_iterator> InstTraversalConstRange;
+};
 /**
  * @todo(cscd70) Please provide an instantiation for the backward pass.
  */
@@ -113,6 +118,20 @@ private:
     printDomainWithMask(InstDomainValMap.at(&Inst));
     errs() << "\n";
   }
+ METHOD_ENABLE_IF_DIRECTION(Direction::kBackward, void)
+  printInstDomainValMap(const Instruction &Inst) const {
+    const BasicBlock *const InstParent =Inst.getParent();
+    if (&Inst == &(InstParent->back())) {
+      errs() << "\t";
+      printDomainWithMask(getBoundaryVal(*InstParent));
+      errs() << "\n";
+    } // if (&Inst == &(*InstParent->begin()))
+
+    outs() << Inst << "\n";
+    errs() << "\t";
+    printDomainWithMask(InstDomainValMap.at(&Inst));
+    errs() << "\n";
+  }
   /**
    * @brief Dump, ∀inst ∈ F, the associated domain value.
    */
@@ -150,9 +169,22 @@ private:
     /**
      * @todo(cscd70) Please complete the definition of this method.
      */
-    for(auto it=pred_begin(&BB),et=pred_end(&BB);it!=et;++it){
-       const BasicBlock* predecessor = *it;
-       Operands.emplace_back(InstDomainValMap.at(&predecessor->back()));
+    for(auto It=pred_begin(&BB),Et=pred_end(&BB);It!=Et;++It){
+       const BasicBlock* Predecessor = *It;
+       Operands.emplace_back(InstDomainValMap.at(&Predecessor->back()));
+    }
+    return Operands;
+  }
+
+  METHOD_ENABLE_IF_DIRECTION(Direction::kBackward, MeetOperands_t)
+  getMeetOperands(const BasicBlock &BB) const {
+    MeetOperands_t Operands;
+    /**
+     * @todo(cscd70) Please complete the definition of this method.
+     */
+    for(auto It=succ_begin(&BB),Et=succ_end(&BB);It!=Et;++It){
+       const BasicBlock* Successor = *It;
+       Operands.emplace_back(InstDomainValMap.at(&Successor->front()));
     }
     return Operands;
   }
@@ -167,12 +199,12 @@ private:
     /**
      * @todo(cscd70) Please complete the defintion of this method.
      */
-    DomainVal_t ret=MeetOperands.at(0);
-    for(size_t i=1;i<MeetOperands.size();i++){
+    DomainVal_t Ret=MeetOperands.at(0);
+    for(size_t I=1;I<MeetOperands.size();I++){
         TMeetOp MeetOp;
-        ret=MeetOp(ret,MeetOperands.at(i));
+        Ret=MeetOp(Ret,MeetOperands.at(I));
     }
-    return ret;
+    return Ret;
   }
   /*****************************************************************************
    * Transfer Function
@@ -192,9 +224,7 @@ protected:
 
 private:
   /**
-   * @brief  Apply the transfer function at instruction @c Inst to the input
-   *         domain values to get the output.
-   * @return true if @c OV has been changed, false otherwise
+   * @brief  Apply the transfer function at instruction @c Inst to thBBTraversalConstRange
    *
    * @todo(cscd70) Please implement this method for every child class.
    */
@@ -214,6 +244,12 @@ private:
   getBBTraversalOrder(const Function &F) const {
     return make_range(F.begin(), F.end());
   }
+
+  METHOD_ENABLE_IF_DIRECTION(Direction::kBackward, BBTraversalConstRange)
+  getBBTraversalOrder(const Function &F) const {
+     return make_range(F.getBasicBlockList().rbegin(),F.getBasicBlockList().rend());
+  }
+
   /**
    * @brief Return the traversal order of the instructions.
    *
@@ -222,6 +258,11 @@ private:
   METHOD_ENABLE_IF_DIRECTION(Direction::kForward, InstTraversalConstRange)
   getInstTraversalOrder(const BasicBlock &BB) const {
     return make_range(BB.begin(), BB.end());
+  }
+
+  METHOD_ENABLE_IF_DIRECTION(Direction::kBackward, InstTraversalConstRange)
+  getInstTraversalOrder(const BasicBlock &BB) const {
+    return make_range(BB.getInstList().rbegin(), BB.getInstList().rend());
   }
   /**
    * @brief  Traverse through the CFG and update instruction-domain value
@@ -232,21 +273,22 @@ private:
    */
   bool traverseCFG(const Function &F) { 
     //return false; 
-    bool ifChange=false;
-    BBTraversalConstRange bb=getBBTraversalOrder(F);
-    for(auto it=bb.begin(),et=bb.end();it!=et;++it){
-      DomainVal_t in=getBoundaryVal(*it);
-      InstTraversalConstRange inst=getInstTraversalOrder(*it);
-      for(auto iit=inst.begin(),eet=inst.end();iit!=eet;++iit){
-        DomainVal_t out=InstDomainValMap.at(&(*iit));
-        ifChange=ifChange|transferFunc(*iit,in,out);
-        if(ifChange){
-          InstDomainValMap.at(&(*iit))=out;
+    outs() << "trverseCFG" << "\n";
+    bool IfChange=false;
+    BBTraversalConstRange BB=getBBTraversalOrder(F);
+    for(auto BbBegin=BB.begin(),BbEnd=BB.end();BbBegin!=BbEnd;++BbBegin){
+      DomainVal_t In=getBoundaryVal(*BbBegin);
+      InstTraversalConstRange Inst=getInstTraversalOrder(*BbBegin);
+      for(auto InstBegin=Inst.begin(),InstEnd=Inst.end();InstBegin!=InstEnd;++InstBegin){
+        DomainVal_t Out=InstDomainValMap.at(&(*InstBegin));
+        IfChange=IfChange|transferFunc(*InstBegin,In,Out);
+        if(IfChange){
+          InstDomainValMap.at(&(*InstBegin))=Out;
         }
-        in=out;
+        In=Out;
       }
     }
-    return ifChange;
+    return IfChange;
   }
   /*****************************************************************************
    * Domain Initialization

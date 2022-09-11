@@ -27,8 +27,9 @@ private:
 
     // User-Use-Value
     for (auto *Iter = Inst1st.op_begin(); Iter != Inst1st.op_end(); ++Iter) {
+      
       Value *Operand = *Iter;
-
+      outs() <<"Operand: "<<*Operand << "\n";
       if (Argument *Arg = dyn_cast<Argument>(Operand)) {
         outs() << "I am function " << Arg->getParent()->getName() << "\'s #"
                << Arg->getArgNo() << " argument"
@@ -40,10 +41,12 @@ private:
     }
 
     for (auto Iter = Inst1st.user_begin(); Iter != Inst1st.user_end(); ++Iter) {
+      outs() << "User: " << *(*Iter) << "\n";
       outs() << *(dyn_cast<Instruction>(*Iter)) << "\n";
     }
 
     for (auto Iter = Inst1st.use_begin(); Iter != Inst1st.use_end(); ++Iter) {
+      outs() << "Use: " << *(*Iter) << "\n";
       outs() << *(dyn_cast<Instruction>(Iter->getUser())) << "\n";
     }
 

@@ -27,9 +27,9 @@ private:
       /**
        * @todo(cscd70) Please complete the construction of domain.
        */
-      Expression exp=Expression(*BinaryOp);
-      if(std::find(Domain.begin(),Domain.end(),exp)==Domain.end()){
-          Domain.emplace_back(exp);
+      Expression Exp=Expression(*BinaryOp);
+      if(std::find(Domain.begin(),Domain.end(),Exp)==Domain.end()){
+          Domain.emplace_back(Exp);
       }
     }
   }
@@ -38,41 +38,41 @@ private:
     /**
      * @todo(cscd70) Please complete the definition of the transfer function.
      */
-    DomainVal_t new_OBV=IBV;
-    int id=0;
-    for(Expression exp:Domain){
-        bool flag=false;
-        if(const Instruction *inst=dyn_cast<Instruction>(exp.LHS)){
-          if(inst==&Inst){
-            flag=true;
+    DomainVal_t NewObv=IBV;
+    int Idx=0;
+    for(Expression Exp:Domain){
+        bool Flag=false;
+        if(const Instruction *I=dyn_cast<Instruction>(Exp.LHS)){
+          if(I==&Inst){
+            Flag=true;
           }
         }
-        if(const Instruction *inst=dyn_cast<Instruction>(exp.RHS)){
-          if(inst==&Inst){
-            flag=true;
+        if(const Instruction *I=dyn_cast<Instruction>(Exp.RHS)){
+          if(I==&Inst){
+            Flag=true;
           }
         }
-        if(flag){
-          new_OBV.at(id)=false;
+        if(Flag){
+          NewObv.at(Idx)=false;
         }
-        id++;
+        Idx++;
     }
     if (const BinaryOperator *const BinaryOp =
             dyn_cast<BinaryOperator>(&Inst)) {
-      auto iter=std::find(Domain.begin(),Domain.end(),Expression(*BinaryOp));
-      if(iter!=Domain.end()){
-        auto begin=Domain.begin();
-        int pos=0;
-        while(begin!=iter){
-          begin++;
-          pos++;
+      auto Iter=std::find(Domain.begin(),Domain.end(),Expression(*BinaryOp));
+      if(Iter!=Domain.end()){   
+        auto Begin=Domain.begin();
+        int Pos=0;
+        while(Begin!=Iter){
+          Begin++;
+          Pos++;
         }
-        new_OBV.at(pos)=true;
+        NewObv.at(Pos)=true;
       }
     }
-    bool hasChange = new_OBV == OBV ? false:true;
-    OBV=new_OBV;
-    return hasChange;
+    bool HasChange = NewObv == OBV ? false:true;
+    OBV=NewObv;
+    return HasChange;
   }
 
 public:
