@@ -34,6 +34,8 @@ public:
      * @todo(cscd70) Request that the anticipated and will-be-available
      *               expressions to run first.
      */
+    AU.addRequired<AntiExprWrapperPass>();
+    AU.addRequired<WBAvailExprWrapperPass>();
     AU.setPreservesAll();
   }
   bool runOnFunction(Function &F) override {

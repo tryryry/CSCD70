@@ -11,7 +11,7 @@ class WBAvailExprWrapperPass;
  * @todo(cscd70) Provide an implementation for the will-be-available
  *               expressions, by inheriting from the DFA framework.
  */
-class WBAvailExprImpl {
+class WBAvailExprImpl{
 private:
   friend class WBAvailExprWrapperPass;
 };
@@ -33,6 +33,7 @@ public:
     /**
      * @todo(cscd70) Request that the anticipated expressions to run first.
      */
+    AU.addRequired<AntiExprWrapperPass>();
     AU.setPreservesAll();
   }
   bool runOnFunction(Function &F) override {
