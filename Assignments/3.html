@@ -1,18 +1,16 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Assignment 3 Loop Invariant Code Motion &#8212; CSCD70 2021S documentation</title>
+    <title>Assignment 3 Loop Invariant Code Motion &#8212; CSCD70 2023S documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Assignment 2 Dataflow Analysis" href="2.html" />
@@ -32,11 +30,11 @@
         <li class="right" >
           <a href="2.html" title="Assignment 2 Dataflow Analysis"
              accesskey="P">previous</a> |</li>
-  <li><a href="https://uoft-ecosystem.github.io/CSCD70/index.html">CSCD70 2021S Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="https://uoft-ecosystem.github.io/CSCD70/index.html">CSCD70 2023S Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html"></a>&raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Assignments</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Assignment 3 Loop Invariant Code Motion </a></li> 
+        <li class="nav-item nav-item-this"><a href="">Assignment 3 Loop Invariant Code Motion</a></li> 
       </ul>
     </div>  
 
@@ -45,11 +43,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="assignment-3-loop-invariant-code-motion-handout">
-<h1>Assignment 3 Loop Invariant Code Motion <a class="reference external" href="https://www.overleaf.com/read/xctvxpqvxrvk"><img alt="handout" src="https://img.shields.io/badge/-handout-blue" /></a><a class="headerlink" href="#assignment-3-loop-invariant-code-motion-handout" title="Permalink to this headline">¶</a></h1>
-<p>Please click on the badges above for the assignment handout and the invitation
-to GitHub Classroom. TODO items have been marked using <code class="docutils literal notranslate"><span class="pre">todo(cscd70)</span></code> in the source code.
-These include both the optimization passes <strong>AND</strong> the test cases.</p>
+  <section id="assignment-3-loop-invariant-code-motion">
+<h1>Assignment 3 Loop Invariant Code Motion<a class="headerlink" href="#assignment-3-loop-invariant-code-motion" title="Permalink to this heading">¶</a></h1>
+<p><strong>Due Date</strong>: April. 7th, <strong>Handout</strong>:
+<a class="reference external" href="https://www.overleaf.com/read/xctvxpqvxrvk">[Overleaf]</a>, <strong>GitHub
+Classroom</strong>: <a class="reference external" href="https://classroom.github.com/a/PLVehVFF">[Invitation]</a></p>
+<p>Please click on the links above for the assignment handout and the invitation to
+GitHub Classroom. Note that</p>
+<ul class="simple">
+<li><p>The repository is initialized to be empty, so you will have to copy the files
+in this folder into your own repository.</p></li>
+<li><p>TODO items have been marked using <code class="docutils literal notranslate"><span class="pre">todo(CSCD70)</span></code> in the source code. <strong>These
+include both the optimization passes and the test cases.</strong> Please make sure
+that you have completed both parts before submitting.</p></li>
+</ul>
 </section>
 
 
@@ -63,8 +70,7 @@ These include both the optimization passes <strong>AND</strong> the test cases.<
 <h3>Course Materials</h3>
      
 <ul class="want-points">
-  <li><a href="https://uoft-ecosystem.github.io/CSCD70/Syllabus.html">Syllabus</a></li>
-  <li><a href="https://uoft-ecosystem.github.io/CSCD70/Slides%20%26%20Recordings.html">Slides & Recordings</a></li>
+  <li><a href="https://uoft-ecosystem.github.io/CSCD70/Slides.html">Slides</a></li>
   <li><a href="https://uoft-ecosystem.github.io/CSCD70/Assignments/index.html">Assignments</a></li>
   <li><a href="https://github.com/UofT-EcoSystem/CSCD70">GitHub Repository</a></li>
 </ul>
@@ -72,12 +78,7 @@ These include both the optimization passes <strong>AND</strong> the test cases.<
 <h3>Additional Links</h3>
 
 <ul class="want-points">
-  <li><a href="https://vectorinstitute.zoom.us/j/99214420711">Lecture</a><br />
-      (Passcode 487511)</li>
-  <li><a href="https://utoronto.zoom.us/j/85194477652">Tutorial</a><br />
-      (Passcode 040333)</li>
-  <li><a href="https://piazza.com/utoronto.ca/winter2021/cscd70/home">Piazza</a></li>
-  <li><a href="https://markus.utsc.utoronto.ca/cscd70w21">MarkUs</a></li>
+  <li><a href="https://piazza.com/utoronto.ca/winter2023/cscd70/home">Piazza</a></li>
 </ul>
 
 <h3>Documentations</h3>
@@ -96,7 +97,7 @@ These include both the optimization passes <strong>AND</strong> the test cases.<
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -110,16 +111,16 @@ These include both the optimization passes <strong>AND</strong> the test cases.<
         <li class="right" >
           <a href="2.html" title="Assignment 2 Dataflow Analysis"
              >previous</a> |</li>
-  <li><a href="https://uoft-ecosystem.github.io/CSCD70/index.html">CSCD70 2021S Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="https://uoft-ecosystem.github.io/CSCD70/index.html">CSCD70 2023S Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html"></a>&raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Assignments</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Assignment 3 Loop Invariant Code Motion </a></li> 
+        <li class="nav-item nav-item-this"><a href="">Assignment 3 Loop Invariant Code Motion</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, University of Toronto.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+        &#169; Copyright 2023, University of Toronto.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
     </div>
   </body>
 </html>
